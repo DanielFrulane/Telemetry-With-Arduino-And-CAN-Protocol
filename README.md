@@ -10,7 +10,7 @@ This project proposed a model for an adaptive telemetry system which was impleme
 - Accessible to mount;
 - Easy to learn.
 
-The system should be able to use Local Processing Units as to collect raw data and send processed data from any generic type of sensor, be controlled by a Central Processing Unit (which would communicate with the cloud), without restrictions as to the type of data of the sensor. It should be capable to use this data, intermediated by Actuator Units, as to execute any desired application of it. An Automation Unit would be able to change state of the system that gave control over the Actuators either by user's direct control or directly by the values of the processed data. Criptograpy of the data would be supported.
+The system should be able to use Local Processing Units as to collect raw data and send processed data from any generic type of sensor, be controlled by a Central Processing Unit (which would communicate with the cloud), without restrictions as to the type of data of the sensor. It should be capable to use this data, intermediated by Actuator Units, as to execute any desired application of it. An Automation Unit would be able to change state of the system that gave control over the Actuators either by user's direct control or directly by the values of the processed data. Cryptograpy of the data would be supported.
 
 ### Solution
 In order to create the system, a series of "template" codes were made to serve as a skeleton for implementing individual units. That is, they form the basis for the continuous development of specific components in the project and are designed in a generalistic manner. The idea would be to just copy these templates and modify minimal aspects of it in order to implement their basic functionalities with the desired application. The files here presented contains the code templates for the Central Unit, Local Processing Unit, Automation Unit and Actuators. I chose to use the Arduino microcontroller as the basic component for such functionalities (more specifically, the Arduino Nano, which is smaller), and the CAN (Controller Area Network) communication protocol to connect all individual modules. The Central Processing Unit template was created using a Beaglebone Black microcomputer. 
@@ -41,12 +41,12 @@ Each individual Local Unit is uniquely identified by a hexadecimal value within 
 4. All Local Processing Units send information from each sensor, encoded in a string, and then goes into stall mode until the "processing" message is sent by Central Processing. As the CAN protocol limits the number of bytes sent per message, every string is encoded into a sequence of bytes and decoded by the Central Processing with the help of special characters included in the messages associated with the string. Each sensor is associated with the following information (those not related to hardware are stored in a data structure in Central Processing to generate a log):
     - Sensor Name;
     - Unit of measurement;
-    - Collection step (whithin how many seconds the data is collected);
+    - Collection step (within how many seconds the data is collected);
     - Pin (where it is connected to the Arduino);
     - Maximum value (if not null, it says the maximum value that the measurement can reach before identifying a value alert);
     - Minimum value (if not null, it says the minimum value that the measurement can reach before identifying a value alert).
 5. After a certain period of time without receiving information from Local Processing, the Central Processing sends the "processing" message, requesting sensor readings.
-6. With the collection of values from each sensor occurring at the frequency determined in its sensor information (predetermined), the Local Processing Units interpret sends messages to the CAN protocol with their associated reading, every time the time elapsed since the last collection of values is the same as it's step. Considering that the messages sent by Local Processing are not processed immediately through Central Processing, a lag is prevented from occurring incremental in writing data on a continuous temporal scale. The code was formulated so that the delay between the step is equal to the elapsed time since the last reading and the reading of the value in Local Processing will be irrelevant.
+6. With the collection of values from each sensor occurring at the frequency determined in its sensor information (predetermined), the Local Processing Units interpret sends messages to the CAN protocol with their associated reading, every time the time elapsed since the last collection of values is the same as its step. Considering that the messages sent by Local Processing are not processed immediately through Central Processing, a lag is prevented from occurring incremental in writing data on a continuous temporal scale. The code was formulated so that the delay between the step is equal to the elapsed time since the last reading and the reading of the value in Local Processing will be irrelevant.
 7. Central Processing interprets incoming sensor data, sends it to the external communication protocol, and generates a log formatted on the SD card module.
 8. At any time, if the data received by Central Processing is not formatted properly, it will send the "error" message, causing the Local Processing Units to completely restart, as if they had just been energized.
 
@@ -70,7 +70,7 @@ In order to apply CAN communications in the system, I used the Arduino module MC
 Next up, for a practical implementation of each Unit in the vehicle, outside integrating all nodes with CAN communications, the templates should be applied according to the following instructions:
 
 - Central Processing Unit: must have access to external communications, and send all transcribed data from the CAN bus into the cloud.
-- Automation Unit: positioned somewhere the driver could access it's "change of automation state" button.
+- Automation Unit: positioned somewhere the driver could access its "change of automation state" button.
 - Local Processing Units: Directly connected with the sensors related to this unit's implementation.
 - Actuator Units: Directly connected with the actuators related to this unit's implementation.
 
